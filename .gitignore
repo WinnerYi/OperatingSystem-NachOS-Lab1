@@ -1,0 +1,10 @@
+.DS_Store
+code/build.linux/nachos
+code/test/DISK_0
+code/test/LotOfAdd
+code/test/add
+code/test/createFile
+code/test/file1.test
+code/test/fileIO_test1
+code/test/fileIO_test2
+code/test/halt

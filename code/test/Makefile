@@ -1,4 +1,5 @@
-#
+# 改第115行
+
 # Makefile for building user programs to run on top of Nachos
 #
 #  Use "make" to build the test executable(s)
@@ -112,7 +113,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt createFile LotOfAdd
+PROGRAMS = add halt createFile LotOfAdd fileIO_test1 fileIO_test2 #here
 endif
 
 all: $(PROGRAMS)

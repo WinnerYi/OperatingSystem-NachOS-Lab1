@@ -100,6 +100,89 @@ void ExceptionHandler(ExceptionType which) {
                     return;
                     ASSERTNOTREACHED();
                     break;
+
+
+                 /* HW1 實作：Open, Write, Read, Close */
+                case SC_Open:
+                    // arg1 在 r4：虛擬記憶體字串位址 / Read filename virtual address from r4
+                    val = kernel->machine->ReadRegister(4);
+                    {
+                        // 轉換為實體主記憶體指標 / Translate to physical memory pointer
+                        char *filename = &(kernel->machine->mainMemory[val]);
+                        // 呼叫核心函式取得 OpenFileId / Call SysOpen to get file descriptor ID
+                        status = SysOpen(filename);
+                        // 將回傳值寫入 r2 / Return status to register r2
+                        kernel->machine->WriteRegister(2, (int)status);
+                    }
+                    // 更新 PC 移動到下一條指令 / Advance Program Counter
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
+                    ASSERTNOTREACHED();
+                    break;
+
+                case SC_Write:
+                    {
+                        // arg1 (r4): buffer 虛擬位址 / Buffer virtual address
+                        int bufferAddr = kernel->machine->ReadRegister(4);
+                        // arg2 (r5): 寫入位元組大小 / Size of data to write
+                        int size = kernel->machine->ReadRegister(5);
+                        // arg3 (r6): 檔案描述符 ID / OpenFileId (file descriptor)
+                        OpenFileId fid = kernel->machine->ReadRegister(6);
+
+                        char *buffer = &(kernel->machine->mainMemory[bufferAddr]);
+                        status = SysWrite(buffer, size, fid);
+                        kernel->machine->WriteRegister(2, (int)status);
+                    }
+                    // 更新 PC 移動到下一條指令 / Advance Program Counter
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
+                    ASSERTNOTREACHED();
+                    break;
+
+                case SC_Read:
+                    {
+                        // arg1 (r4): buffer 虛擬位址 / Buffer virtual address
+                        int bufferAddr = kernel->machine->ReadRegister(4);
+                        // arg2 (r5): 讀取位元組大小 / Size of data to read
+                        int size = kernel->machine->ReadRegister(5);
+                        // arg3 (r6): 檔案描述符 ID / OpenFileId (file descriptor)
+                        OpenFileId fid = kernel->machine->ReadRegister(6);
+
+                        char *buffer = &(kernel->machine->mainMemory[bufferAddr]);
+                        status = SysRead(buffer, size, fid);
+                        kernel->machine->WriteRegister(2, (int)status);
+                    }
+                    // 更新 PC 移動到下一條指令 / Advance Program Counter
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
+                    ASSERTNOTREACHED();
+                    break;
+
+                case SC_Close:
+                    {
+                        // arg1 (r4): 檔案描述符 ID / OpenFileId to close
+                        OpenFileId fid = kernel->machine->ReadRegister(4);
+                        status = SysClose(fid);
+                        kernel->machine->WriteRegister(2, (int)status);
+                    }
+                    // 更新 PC 移動到下一條指令 / Advance Program Counter
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
+                    ASSERTNOTREACHED();
+                    break;
+
+
+
+
+
                 case SC_Add:
                     DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
                     /* Process SysAdd Systemcall*/
